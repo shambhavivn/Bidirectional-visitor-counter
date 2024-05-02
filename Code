@@ -1,0 +1,57 @@
+#include <LiquidCrystal.h>
+ 
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // Declare the lcd object
+const int sensor1Pin = 7; // Pin connected to the sensor for incrementing count
+const int sensor2Pin = 8; // Pin connected to the sensor for decrementing count
+const int ledPin = 9; // Pin connected to the LED light
+ 
+int count = 0; // Counter variable
+bool sensor1State = false; // State of sensor1
+bool sensor2State = false; // State of sensor2
+void setup() {
+ lcd.begin(16, 2); // Initialize the LCD module
+ pinMode(sensor1Pin, INPUT); // Set sensor1Pin as an input
+ pinMode(sensor2Pin, INPUT); // Set sensor2Pin as an input
+ pinMode(ledPin, OUTPUT); // Set ledPin as an output
+ digitalWrite(ledPin, LOW); // Turn off the LED initially
+ lcd.clear()
+lcd.print("Person In Room:");
+ lcd.setCursor(0, 1);
+ lcd.print(count);
+}
+ 
+void loop() {
+ bool currentSensor1State = digitalRead(sensor1Pin); // Read the state of sensor1Pin
+ bool currentSensor2State = digitalRead(sensor2Pin); // Read the state of sensor2Pin
+ 
+ if (currentSensor1State && !sensor1State) { // Sensor1 triggered
+   count++;
+   lcd.clear();
+   lcd.print("Person In Room:");
+   lcd.setCursor(0, 1);
+   lcd.print(count);
+ }
+ 
+ 
+if (currentSensor2State && !sensor2State && count > 0) { // Sensor2 triggered
+   count--;
+lcd.clear();
+   lcd.print("Person In Room:");
+   lcd.setCursor(0, 1);
+   lcd.print(count);
+ }
+ 
+ if (count > 0) {
+   digitalWrite(ledPin, HIGH); // Turn on the LED
+ } else {
+   count = 0; // Ensure count doesn't go below zero
+   digitalWrite(ledPin, LOW); // Turn off the LED
+   lcd.clear();
+   lcd.print("Nobody in the Room:");
+   lcd.setCursor(0, 1);
+   lcd.print("Light is off");
+ }
+ 
+ sensor1State = currentSensor1State; // Update sensor1 state
+ sensor2State = currentSensor2State; // Update sensor2 state
+}
